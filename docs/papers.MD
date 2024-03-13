@@ -37,15 +37,15 @@
 
 1. **LiDAR: Sensing Linear Probing Performance in Joint Embedding SSL Architectures** ArXiv, 2023. [paper](https://arxiv.org/pdf/2312.04000.pdf)
 
-*Vimal Thilak, Chen Huang, Omid Saremi, Laurent Dinh, Hanlin Goh, Preetum Nakkiran, Joshua M. Susskind, Etai Littwin.*
+	*Vimal Thilak, Chen Huang, Omid Saremi, Laurent Dinh, Hanlin Goh, Preetum Nakkiran, Joshua M. Susskind, Etai Littwin.*
 
 1. **RankMe: Assessing the Downstream Performance of Pretrained Self-Supervised Representations by Their Rank**, TMLR, 2023. [paper](https://proceedings.mlr.press/v202/garrido23a/garrido23a.pdf)
 
-*Quentin Garrido, Randall Balestriero, Laurent Najman, Yann Lecun.*
+	*Quentin Garrido, Randall Balestriero, Laurent Najman, Yann Lecun.*
 
 1. **Local Aggregation for Unsupervised Learning of Visual Embeddings** ICCV, 2019. [paper](https://openaccess.thecvf.com/content_ICCV_2019/papers/Zhuang_Local_Aggregation_for_Unsupervised_Learning_of_Visual_Embeddings_ICCV_2019_paper.pdf)
 
-*Chengxu Zhuang, Alex Lin Zhai, Daniel Yamins.*
+	*Chengxu Zhuang, Alex Lin Zhai, Daniel Yamins.*
 
 ## [Applications](#content)  
 
