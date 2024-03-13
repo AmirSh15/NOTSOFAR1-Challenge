@@ -1,23 +1,54 @@
+[![Slack][slack-badge]][slack-invite]
+
+
+[slack-badge]: https://img.shields.io/badge/slack-chat-green.svg?logo=slack
+[slack-invite]: https://join.slack.com/t/chime-fey5388/shared_invite/zt-1oha0gedv-JEUr1mSztR7~iK9AxM4HOA
+
 # Introduction 
 Welcome to the "NOTSOFAR-1: Distant Meeting Transcription with a Single Device" Challenge.
 
 This repo contains the baseline system code for the NOTSOFAR-1 Challenge.
 
-For more details see:
-1. CHiME website: https://www.chimechallenge.org/current/task2/index
-2. Preprint: https://arxiv.org/abs/2401.08887
+- For more information about NOTSOFAR, visit [CHiME's official challenge website](https://www.chimechallenge.org/current/task2/index)
+- [Register](https://www.chimechallenge.org/current/task2/submission) to participate.
+- [Baseline system description](https://www.chimechallenge.org/current/task2/baseline).
+- Contact us: join the `chime-8-notsofar` channel on the [CHiME Slack](https://join.slack.com/t/chime-fey5388/shared_invite/zt-1oha0gedv-JEUr1mSztR7~iK9AxM4HOA), or open a [GitHub issue](https://github.com/microsoft/NOTSOFAR1-Challenge/issues). 
+
+### 📊 Baseline Results on NOTSOFAR dev-set-1
+
+Values are presented in `tcpWER / tcORC-WER (session count)` format.
+<br>
+As mentioned in the [official website](https://www.chimechallenge.org/current/task2/index#tracks), 
+systems are ranked based on the speaker-attributed 
+[tcpWER](https://github.com/fgnt/meeteval/blob/main/doc/tcpwer.md)
+, while the speaker-agnostic [tcORC-WER](https://github.com/fgnt/meeteval) serves as a supplementary metric for analysis.
+<br>
+We include analysis based on a selection of hashtags from our [metadata](https://www.chimechallenge.org/current/task2/data#metadata), providing insights into how different conditions affect system performance.
+
+
+
+|                      | Single-Channel        | Multi-Channel         |
+|----------------------|-----------------------|-----------------------|
+| All Sessions         | **46.8** / 38.5 (177) | **32.4** / 26.7 (106) |
+| #NaturalMeeting      | 47.6 / 40.2 (30)      | 32.3 / 26.2 (18)      |
+| #DebateOverlaps      | 54.9 / 44.7 (39)      | 38.0 / 31.4 (24)      |
+| #TurnsNoOverlap      | 32.4 / 29.7 (10)      | 21.2 / 18.8 (6)       |
+| #TransientNoise=high | 51.0 / 43.7 (10)      | 33.6 / 29.1 (5)       |
+| #TalkNearWhiteboard  | 55.4 / 43.9 (40)      | 39.9 / 31.2 (22)      |
+
+
+
+
+
 
 
 # Project Setup
 The following steps will guide you through setting up the project on your machine. <br>
 
 ### Windows Users
-This project is compatible with **Linux** only, Windows users should use WSL2 to run it. <br>
-Follow the instructions in the [WSL2 Installation Guide](https://learn.microsoft.com/en-us/windows/wsl/install) to install WSL2 on your machine. <br>
-Next, install Ubuntu 20.04 from the [Microsoft Store](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71?activetab=pivot:overviewtab). <br>
-
-Alternatively, you can run and work on the project in a [devctonainer](https://containers.dev/) using, for example, the [Dev Containers VSCode Extension](https://code.visualstudio.com/docs/devcontainers/containers).
-
+This project is compatible with **Linux** environments. Windows users can refer to [Docker](#docker) or 
+[Devcontainer](#devcontainer) sections. <br>
+Alternatively, install WSL2 by following the [WSL2 Installation Guide](https://learn.microsoft.com/en-us/windows/wsl/install), then install Ubuntu 20.04 from the [Microsoft Store](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71?activetab=pivot:overviewtab). <br>
 
 ## Cloning the Repository
 
@@ -58,11 +89,11 @@ To set it up, run the following commands:
 source "/path/to/conda/dir/etc/profile.d/conda.sh"
 conda create --name notsofar python=3.10 -y
 conda activate notsofar 
-cd /path/to/NOTSOFAR-Repo
+cd /path/to/NOTSOFAR1-Challenge
 python -m pip install --upgrade pip
 pip install --upgrade setuptools wheel Cython fasttext-wheel
-pip install azure-cli 
 pip install -r requirements.txt
+conda install ffmpeg -c conda-forge -y
 ```
 
 ### PIP
@@ -94,31 +125,36 @@ source /path/to/virtualenvs/NOTSOFAR/bin/activate
 Navigate to the cloned repository and install the required Python dependencies:
 
 ```bash
-cd /path/to/NOTSOFAR-Repo
+cd /path/to/NOTSOFAR1-Challenge
 python -m pip install --upgrade pip
 pip install --upgrade setuptools wheel Cython fasttext-wheel
 sudo apt-get install python3.10-dev ffmpeg build-essential
 pip install -r requirements.txt
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
 ```
 
-#### Step 4: Install Azure CLI
+### Docker
 
-Azure CLI is required to download the datasets. To install it, run the following commands:
+Refer to the `Dockerfile` in the project's root for dependencies setup. To use Docker, ensure you have Docker installed on your system and configured to use Linux containers.
 
-```bash
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-```
+### Devcontainer
+With the provided `devcontainer.json` you can run and work on the project in a [devctonainer](https://containers.dev/) using, for example, the [Dev Containers VSCode Extension](https://code.visualstudio.com/docs/devcontainers/containers).
+
 
 # Running evaluation - the inference pipeline
-The following command will download the entire dev-set of the recorded meeting dataset and run the inference pipeline
-according to selected configuration. The default is configured to `debug_inference.yaml` for quick debugging, running on a single session.
+The following command will download the **entire dev-set** of the recorded meeting dataset and run the inference pipeline
+according to selected configuration. The default is configured to `--config-name dev_set_1_mc_debug` for quick debugging, 
+running on a single session with the Whisper 'tiny' model.
 ```bash
-cd /path/to/NOTSOFAR-Repo
+cd /path/to/NOTSOFAR1-Challenge
 python run_inference.py
 ```
 
-The first time you run it, it will automatically download these required models and datasets from blob storage:
+To run on all multi-channel or single-channel dev-set sessions, use the following commands respectively:
+```bash
+python run_inference.py --config-name full_dev_set_mc
+python run_inference.py --config-name full_dev_set_sc
+```
+The first time `run_inference.py` runs, it will automatically download these required models and datasets from blob storage:
 
 
 1. The development set of the meeting dataset (dev-set) will be stored in the `artifacts/meeting_data` directory.
@@ -126,20 +162,10 @@ The first time you run it, it will automatically download these required models 
 
 Outputs will be written to the `artifacts/outputs` directory.
 
-### Running on a subset of the dev-set meeting data
-`run_inference.py` by default points to the config yaml that loads the full meeting dataset: 
 
-```
-conf_file = project_root / 'configs/inference/inference_v1.yaml'
-```
 
-For debugging, to run on only one meeting and the Whisper 'tiny' model, you can use the following config:
-```
-conf_file = project_root / 'configs/inference/debug_inference.yaml'
-```
-
-The `session_query` argument found in the yaml config file offers more control over filtering meetings.
-Note that to submit results on the dev-set, you must evaluate on the full set and no filtering must be performed.
+The `session_query` argument found in the yaml config file (e.g. `configs/inference/inference_v1.yaml`) offers more control over filtering meetings.
+Note that to submit results on the dev-set, you must evaluate on the full set (`full_dev_set_mc` or `full_dev_set_sc`) and no filtering must be performed.
 
 
 # Integrating your own models 
@@ -149,6 +175,11 @@ Begin by exploring the following components:
 - **Automatic Speech Recognition (ASR)**: See `asr_inference` in `asr.py`. The baseline implementation relies on [Whisper](https://github.com/openai/whisper). 
 - **Speaker Diarization**: See `diarization_inference` in `diarization.py`. The baseline implementation relies on the [NeMo toolkit](https://github.com/NVIDIA/NeMo).
 
+### Training datasets
+For training and fine-tuning your models, NOTSOFAR offers the **simulated training set** and the training portion of the
+**recorded meeting dataset**. Refer to the `download_simulated_subset` and `download_meeting_subset` functions in 
+[utils/azure_storage.py](https://github.com/microsoft/NOTSOFAR1-Challenge/blob/main/utils/azure_storage.py#L109), 
+or the [NOTSOFAR-1 Datasets](#notsofar-1-datasets---download-instructions) section.
 
 
 # Running CSS (continuous speech separation) training
@@ -156,19 +187,21 @@ Begin by exploring the following components:
 ## 1. Local training on a data sample for development and debugging
 The following command will run CSS training on the 10-second simulated training data sample in `sample_data/css_train_set`.
 ```bash
-cd /path/to/NOTSOFAR-Repo
+cd /path/to/NOTSOFAR1-Challenge
 python run_training_css_local.py
 ```
 
 ## 2. Training on the full simulated training dataset
 
 ### Step 1: Download the simulated training dataset
-You can use the `download_simulated_subset` function in `utils/azure_storage.py` to download the training dataset from blob storage.
+You can use the `download_simulated_subset` function in 
+[utils/azure_storage.py](https://github.com/microsoft/NOTSOFAR1-Challenge/blob/main/utils/azure_storage.py)
+to download the training dataset from blob storage.
 You have the option to download either the complete dataset, comprising almost 1000 hours, or a smaller, 200-hour subset.
 
-For example, to download the entire 1000-hour dataset, make the following calls to download both the training and validation subsets:
+Examples:
 ```python
-ver='v1.4'  # this should point to the lateset and greatest version of the dataset.
+ver='v1.5'  # this should point to the lateset and greatest version of the dataset.
 
 # Option 1: Download the training and validation sets of the entire 1000-hour dataset. 
 train_set_path = download_simulated_subset(
@@ -207,14 +240,9 @@ calculate the loss when training.
 # NOTSOFAR-1 Datasets - Download Instructions
 This section is for those specifically interested in downloading the NOTSOFAR datasets.<br>
 The NOTSOFAR-1 Challenge provides two datasets: a recorded meeting dataset and a simulated training dataset. <br>
-The datasets are stored in Azure Blob Storage, to download them, you will need to install `Azure CLI` (part of the environment setup instructions above).
+The datasets are stored in Azure Blob Storage, to download them, you will need to setup [AzCopy](https://aka.ms/downloadazcopy-v10-linux-arm64)
 
-You can use either the python utilities in `utils/azure_storage.py` or the `az storage copy` command to download the datasets as described below.
-
-To install Azure CLI, run the following command:
-```bash
-curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-```
+You can use either the python utilities in `utils/azure_storage.py` or the `AzCopy` command to download the datasets as described below.
 
 
 
@@ -226,22 +254,25 @@ The NOTSOFAR-1 Recorded Meeting Dataset is a collection of 315 meetings, each av
 
 To download the dataset, you can call the python function `download_meeting_subset` within `utils/azure_storage.py`.
 
-Alternatively, using Azure CLI, set these arguments and run the following command:
+Alternatively, using AzCopy CLI, set these arguments and run the following command:
 
-`--destination` - replace with a path to the directory where you want to download the benchmarking dataset (destination directory must exist). <br>
-`--include-path` - replace with the dataset you want to download: <br>
 - `subset_name`: name of split to download (`dev_set` / `eval_set` / `train_set`).
-- `version`: version to download (`240103g` / etc.). it's best to use the latest.
-Currently only **dev_set** (no GT) and **train_set** are available. See timeline on the [NOTSOFAR page](https://www.chimechallenge.org/current/task2/index) for when the other sets will be released.
-See doc in `download_meeting_subset` function in `utils/azure_storage.py` for latest available versions.
+- `version`: version to download (`240103g` / etc.). Use the latest version. 
+- `datasets_path` - path to the directory where you want to download the benchmarking dataset (destination directory must exist). <br>
+
+Train, dev, and eval sets are released for the NOTSOFAR challenge are released in stages. 
+See release timeline on the [NOTSOFAR page](https://www.chimechallenge.org/current/task2/index#dates).
+See doc in `download_meeting_subset` function in 
+[utils/azure_storage.py](https://github.com/microsoft/NOTSOFAR1-Challenge/blob/main/utils/azure_storage.py#L109) 
+for latest available versions.
 
 ```bash
-az storage copy --recursive --only-show-errors --destination <path to NOTSOFAR datasets>/benchmark --source https://notsofarsa.blob.core.windows.net/benchmark-datasets --include-path <subset_name>/<version>/MTG
+azcopy copy https://notsofarsa.blob.core.windows.net/benchmark-datasets/<subset_name>/<version>/MTG <datasets_path>/benchmark --recursive
 ```
 
 Example:
 ```bash
-az storage copy --recursive --only-show-errors --destination . --source https://notsofarsa.blob.core.windows.net/benchmark-datasets --include-path dev_set/240103g/MTG
+azcopy copy https://notsofarsa.blob.core.windows.net/benchmark-datasets/dev_set/240208.2_dev/MTG . --recursive
 ````
 
 
@@ -253,21 +284,22 @@ The NOTSOFAR-1 Training Dataset is a 1000-hour simulated training dataset, synth
 
 
 To download the dataset, you can call the python function `download_simulated_subset` within `utils/azure_storage.py`.
-Alternatively, using Azure CLI, set these arguments and run the following command:
+Alternatively, using AzCopy CLI, set these arguments and run the following command:
 
-`--destination` - replace with a path to the directory where you want to download the benchmarking dataset (destination directory must exist). <br>
-`--include-path` - replace with the dataset you want to download: <br>
-- `version`: version of the train data to download (`v1` / `v1.1` / `v1.2` / `v1.3` / `1.4` / etc.)
-- `volume` - volume of the train data to download (`200hrs` / `1000hrs` / etc.)
+- `version`: version of the train data to download (`v1.1` / `v1.2` / `v1.3` / `1.4` / `1.5` / etc.).
+See doc in `download_simulated_subset` function in `utils/azure_storage.py` for latest available versions.
+- `volume` - volume of the train data to download (`200hrs` / `1000hrs`)
 - `subset_name`: train data type to download (`train` / `val`)
+- `datasets_path` - path to the directory where you want to download the simulated dataset (destination directory must exist). <br>
+
 
 ```bash
-az storage copy --recursive --only-show-errors --destination <path to NOTSOFAR datasets>/simulated --source https://notsofarsa.blob.core.windows.net/css-datasets --include-path <version>/<volume>/<subset name>
+azcopy copy https://notsofarsa.blob.core.windows.net/css-datasets/<version>/<volume>/<subset_name> <datasets_path>/benchmark --recursive 
 ```
 
 Example:
 ```bash
-az storage copy --recursive --only-show-errors --destination . --source https://notsofarsa.blob.core.windows.net/css-datasets --include-path v1.4/1000hrs/train
+azcopy copy https://notsofarsa.blob.core.windows.net/css-datasets/v1.5/200hrs/train . --recursive
 ```
 
 
@@ -277,3 +309,9 @@ We appreciate your understanding that it is not yet available for academic or co
 However, we are actively working towards expanding its availability for these purposes. 
 We anticipate a forthcoming announcement that will enable broader and more impactful use of this data. Stay tuned for updates. 
 Thank you for your interest and patience.
+
+
+# 🤝 Contribute
+
+Please refer to our [contributing guide](CONTRIBUTING.md) for more information on how to contribute!
+

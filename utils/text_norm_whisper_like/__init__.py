@@ -1,6 +1,6 @@
 """
 NOTSOFAR adopts the same text normalizer as the CHiME-8 DASR track.
-This code is copied from the CHiME-8 repo:
+This code is aligned with the CHiME-8 repo:
 https://github.com/chimechallenge/chime-utils/tree/main/chime_utils/text_norm
 """
 
