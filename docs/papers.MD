@@ -47,7 +47,7 @@
 
 	*Chengxu Zhuang, Alex Lin Zhai, Daniel Yamins.*
 
-1. **DinoSR: Self-Distillation and Online Clustering for Self-supervised Speech Representation Learning** NeurIPS , 2023. [paper](https://openreview.net/pdf?id=twmHKU3Ds4)
+1. **DinoSR: Self-Distillation and Online Clustering for Self-supervised Speech Representation Learning** NeurIPS , 2023. [paper](https://openreview.net/pdf?id=twmHKU3Ds4)[GitHub](https://github.com/Alexander-H-Liu/dinosr)
 
 	*Alexander H. Liu, Heng-Jui Chang, Michael Auli, Wei-Ning Hsu, James Glass.*
 
